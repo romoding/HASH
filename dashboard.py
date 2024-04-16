@@ -38,7 +38,7 @@ if 'history' not in st.session_state:
 st.title('HASH Project Dashboard')
 
 # Sidebar
-page = st.sidebar.selectbox('Navigation', ["Prediction", "Train Model", "Model analysis"])
+page = st.sidebar.selectbox('Navigation', ["Model Prediction", "Train Model", "Model Analysis"])
 st.sidebar.markdown("""---""")
 #st.sidebar.write("Created by [MARCONI LAB@MAK](https://marconilab.org/)")
 #st.sidebar.image("marc.jpg", width=200)
@@ -52,7 +52,7 @@ st.sidebar.image("hash.jpg", width=100)
 submit = None
 uploaded_file = None
 
-if page == "Prediction":
+if page == "Model Prediction":
     # Inputs
     st.markdown("Select input ultrasound image.")
     upload_columns = st.columns([2, 1])
@@ -135,11 +135,8 @@ if page == "Prediction":
             st.error(f"Error during prediction: {str(e)}")
 
 elif page == "Train Model":
-    
-    st.markdown("This page will be available soon :no_entry_sign:")
-
     st.header("Train Model")
-
+    st.markdown("This page will be available soon :no_entry_sign:")
     # # Text input for model name and version
     # model_name = st.text_input("Enter a model name: ")
     # model_version = st.text_input("Enter a model version: ")
@@ -217,6 +214,9 @@ elif page == "Train Model":
 
     #     except Exception as e:
     #         st.error(f"Error during model training: {str(e)}")
+elif page == "Model Analysis":
+    st.header("Model Comparison and Analysis")
+    st.markdown("This page will be available soon :no_entry_sign:")
 
 else:
     st.markdown("This page will be available soon :no_entry_sign:")
