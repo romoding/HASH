@@ -6,7 +6,5 @@ matplotlib
 seaborn
 mlflow
 pathlib
-shutil
 keras==2.13.1
-subprocess
 tensorflow==2.13.0
