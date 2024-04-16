@@ -1,0 +1,14 @@
+streamlit==1.24.0
+lime==0.2.0.1
+scikit-image==0.19.3
+numpy
+matplotlib
+seaborn
+mlflow
+datetime
+pathlib
+zipfile
+shutil
+keras==2.13.1
+subprocess
+tensorflow==2.13.0
