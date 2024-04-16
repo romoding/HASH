@@ -112,7 +112,7 @@ if page == "Prediction":
             details = prediction_details.columns([3, 1])
             with st.spinner(text="Fetching prediction explanations..."):
                 # All of this is mocked
-                explanation_image_1,explanation_image_2,mask_1,mask_2,img,prediction = lime_xai(uploaded_file,sample_size=500)
+                explanation_image_1,explanation_image_2,mask_1,mask_2,img,prediction = lime_xai(uploaded_file,sample_size=100)
                 
                 # Image and Mask display (Example with matplotlib and Streamlit)
                 fig, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=(10, 10))
@@ -136,89 +136,89 @@ if page == "Prediction":
 
 elif page == "Train Model":
     
-    st.markdown("This page is still being implemented :no_entry_sign:")
+    st.markdown("This page will be available soon :no_entry_sign:")
 
     st.header("Train Model")
 
-    # Text input for model name and version
-    model_name = st.text_input("Enter a model name: ")
-    model_version = st.text_input("Enter a model version: ")
-    st.session_state.model_name = model_name
-    st.session_state.model_version = model_version
+    # # Text input for model name and version
+    # model_name = st.text_input("Enter a model name: ")
+    # model_version = st.text_input("Enter a model version: ")
+    # st.session_state.model_name = model_name
+    # st.session_state.model_version = model_version
 
-    # Text inputs for training parameters
-    learning_rate = st.text_input("Enter learning rate: ", value="0.001")
-    epochs = st.text_input("Enter number of epochs: ", value="10")
-    batch_size = st.text_input("Enter batch size: ", value="32")
-    target_size = st.text_input("Enter target size: ", value="224,224")
+    # # Text inputs for training parameters
+    # learning_rate = st.text_input("Enter learning rate: ", value="0.001")
+    # epochs = st.text_input("Enter number of epochs: ", value="10")
+    # batch_size = st.text_input("Enter batch size: ", value="32")
+    # target_size = st.text_input("Enter target size: ", value="224,224")
     
-    # Text input for label names
-    label_names = st.text_input("Enter label names (comma-separated): ", value="Covid,Healthy,Other")
-    label_names = [label.strip() for label in label_names.split(',')]
+    # # Text input for label names
+    # label_names = st.text_input("Enter label names (comma-separated): ", value="Covid,Healthy,Other")
+    # label_names = [label.strip() for label in label_names.split(',')]
 
-    # File upload for batch training
-    st.markdown("Upload a batch of images for training and testing the model.")
-    train_upload = st.file_uploader("Choose a zip file containing images", type=['zip'])
+    # # File upload for batch training
+    # st.markdown("Upload a batch of images for training and testing the model.")
+    # train_upload = st.file_uploader("Choose a zip file containing images", type=['zip'])
     
-    if train_upload:
-        try:
-            mlflow_run_id = None
-            if st.button("Train Model"):
-                with st.spinner(text="Training model..."):
-                    history, mlflow_run_id = train_model(train_upload,
-                                                learning_rate=float(learning_rate),
-                                                epochs=int(epochs),
-                                                batch_size=int(batch_size),
-                                                target_size=tuple(map(int, target_size.split(','))),
-                                                labels=label_names)  
-                    st.session_state.training_status = True
-                    st.session_state.mlflow_run_id = mlflow_run_id
-                    st.session_state.history = history
-                st.success("Model training completed successfully!")
+    # if train_upload:
+    #     try:
+    #         mlflow_run_id = None
+    #         if st.button("Train Model"):
+    #             with st.spinner(text="Training model..."):
+    #                 history, mlflow_run_id = train_model(train_upload,
+    #                                             learning_rate=float(learning_rate),
+    #                                             epochs=int(epochs),
+    #                                             batch_size=int(batch_size),
+    #                                             target_size=tuple(map(int, target_size.split(','))),
+    #                                             labels=label_names)  
+    #                 st.session_state.training_status = True
+    #                 st.session_state.mlflow_run_id = mlflow_run_id
+    #                 st.session_state.history = history
+    #             st.success("Model training completed successfully!")
 
-            # Display "Registration" button only if training is completed
-            if st.session_state.training_status and st.button("Registration"):
-                with st.spinner(text="Registering model..."):
-                    mlflow_run_id = st.session_state.mlflow_run_id
-                    register_trained_model(run_id=mlflow_run_id,model_name=st.session_state.model_name)
-                    st.session_state.registration_status = True
-                st.success("Model Registration completed successfully!")
+    #         # Display "Registration" button only if training is completed
+    #         if st.session_state.training_status and st.button("Registration"):
+    #             with st.spinner(text="Registering model..."):
+    #                 mlflow_run_id = st.session_state.mlflow_run_id
+    #                 register_trained_model(run_id=mlflow_run_id,model_name=st.session_state.model_name)
+    #                 st.session_state.registration_status = True
+    #             st.success("Model Registration completed successfully!")
 
-            # Display "Production" button only if registration is completed
-            if st.session_state.registration_status and st.button("Production"):
-                with st.spinner(text="Transitioning registered model to production stage..."):
-                    move_model_to_production(model_name=st.session_state.model_name,model_version=st.session_state.model_version)
-                    st.session_state.production_status = True
-                st.success("Model Production completed successfully!")
+    #         # Display "Production" button only if registration is completed
+    #         if st.session_state.registration_status and st.button("Production"):
+    #             with st.spinner(text="Transitioning registered model to production stage..."):
+    #                 move_model_to_production(model_name=st.session_state.model_name,model_version=st.session_state.model_version)
+    #                 st.session_state.production_status = True
+    #             st.success("Model Production completed successfully!")
 
-            # Display "Deploy" button only if production is completed
-            if st.session_state.production_status and st.button("Deploy"):
-                # Set deployment URI
-                deployment_uri = f'models:/{st.session_state.model_name}/production'
-                # Deploy the model using MLflow
-                mlflow_serve_command = f"mlflow models serve --model-uri {deployment_uri} -p 7070 --no-conda"
-                with st.spinner(text="Deploying model using MLflow..."):
-                    print(f"{mlflow_serve_command}")
-                    process = subprocess.Popen(mlflow_serve_command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-                    # Wait for the process to complete and get the return code
-                    #return_code = process.wait()
-                    print(f"---{process.returncode}---")
-                    # Capture the output of the command
-                    out, err = process.communicate(timeout=60)
-                    print(f"---{out}---{err}---")
-                    if process.returncode == 0:
-                        print("---d---")
-                        st.session_state.production_status = True
-                        print("---e---")
-                        deployment_url = f"http://localhost:7070/{model_name}/invocations"
-                        st.success(f"Model deployment using MLflow completed successfully!\nDeployment URL: {deployment_url}")
-                    else:
-                        st.error(f"Error during model deployment: {err.decode()}")
+    #         # Display "Deploy" button only if production is completed
+    #         if st.session_state.production_status and st.button("Deploy"):
+    #             # Set deployment URI
+    #             deployment_uri = f'models:/{st.session_state.model_name}/production'
+    #             # Deploy the model using MLflow
+    #             mlflow_serve_command = f"mlflow models serve --model-uri {deployment_uri} -p 7070 --no-conda"
+    #             with st.spinner(text="Deploying model using MLflow..."):
+    #                 print(f"{mlflow_serve_command}")
+    #                 process = subprocess.Popen(mlflow_serve_command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    #                 # Wait for the process to complete and get the return code
+    #                 #return_code = process.wait()
+    #                 print(f"---{process.returncode}---")
+    #                 # Capture the output of the command
+    #                 out, err = process.communicate(timeout=60)
+    #                 print(f"---{out}---{err}---")
+    #                 if process.returncode == 0:
+    #                     print("---d---")
+    #                     st.session_state.production_status = True
+    #                     print("---e---")
+    #                     deployment_url = f"http://localhost:7070/{model_name}/invocations"
+    #                     st.success(f"Model deployment using MLflow completed successfully!\nDeployment URL: {deployment_url}")
+    #                 else:
+    #                     st.error(f"Error during model deployment: {err.decode()}")
 
-        except Exception as e:
-            st.error(f"Error during model training: {str(e)}")
+    #     except Exception as e:
+    #         st.error(f"Error during model training: {str(e)}")
 
 else:
-    st.markdown("This page is not implemented yet :no_entry_sign:")
+    st.markdown("This page will be available soon :no_entry_sign:")
 
 

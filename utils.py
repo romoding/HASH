@@ -21,7 +21,7 @@ import seaborn as sns
 from lime import lime_image
 from skimage.segmentation import slic, mark_boundaries
 
-experiment_name = 'LUS Pathology Classification'
+experiment_name = 'Myoma Classification'
 run_name = datetime.now().strftime("%Y%m%d_%H%M%S")
     
 
@@ -120,9 +120,9 @@ def train_model(zip_file, learning_rate, epochs, batch_size, target_size, labels
     model.add(Dense(64, activation='relu'))
     model.add(Dropout(0.2))
     model.add(BatchNormalization())
-    model.add(Dense(3, activation='softmax'))
+    model.add(Dense(3, activation='sigmoid'))
     
-    model.compile(optimizer=Adam(learning_rate=learning_rate),loss='categorical_crossentropy', metrics=['accuracy'])
+    model.compile(optimizer=Adam(learning_rate=learning_rate),loss='binary_crossentropy', metrics=['accuracy'])
 
     checkpoint = ModelCheckpoint('models/model_{val_accuracy:.3f}.h5',
                                 save_best_only=True,
@@ -183,7 +183,7 @@ def train_model(zip_file, learning_rate, epochs, batch_size, target_size, labels
         
         mlflow.set_experiment_tag("base_model", "VGG16")
         mlflow.set_tag("optimizer", "keras.optimizers.Adam")
-        mlflow.set_tag("loss", "categorical_crossentropy")
+        mlflow.set_tag("loss", "binary_crossentropy")
 
         mlflow.keras.log_model(model, "model")
 
@@ -241,11 +241,6 @@ def model_predictions(array):
     print(f'Processed Image Shape: {preprocessed_image.shape}')
     # Make predictions
     predictions = model.predict(preprocessed_image)
-    # Decode predictions
-    #decoded_predictions = decode_predictions(predictions, top=3)[0]
-
-    # for i, (id, label, score) in enumerate(decoded_predictions):
-    #     print(f"{i + 1}: {label} ({score:.2f})")
 
     return predictions
 
@@ -283,15 +278,3 @@ def lime_xai(image_path,sample_size=1000,target_size=(224,224)):
                                                             hide_rest=False)
 
     return explanation_image_1,explanation_image_2,mask_1,mask_2,img,prediction
-
-    # fig, (ax1,ax2,ax3) = plt.subplots(1,3,figsize=(18,18))
-    # ax1.imshow(mark_boundaries(explanation_image_1/255,mask_1))
-    # ax2.imshow(mark_boundaries(explanation_image_2/255,mask_2))
-    # ax3.imshow(img)
-    # ax1.set_title('Top Positive Patches')
-    # ax2.set_title('Top 5 Patches')
-    # ax3.set_title('Input Image')
-    # ax1.axis('off')
-    # ax2.axis('off')
-    # ax3.axis('off')
-        
