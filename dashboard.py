@@ -111,7 +111,6 @@ if page == "Model Prediction":
                 ax1.imshow(img)
                 ax1.set_title('Input Image')
                 ax1.axis('off')
-                details[0].image(img,caption="Uploaded Image")
             
                 ax2.imshow(mark_boundaries(explanation_image_2/255,mask_2))
                 ax2.set_title('LIME Explanation')
