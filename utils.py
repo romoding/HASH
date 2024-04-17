@@ -235,7 +235,7 @@ def deploy_trained_model(model_name):
 
 def model_predictions(array):
     # Load trained model
-    model = load_model('um_model.h5')
+    model = load_model('um_modelv1.h5')
     # Preprocess the input image for the model
     preprocessed_image = preprocess_input(array)
     print(f'Processed Image Shape: {preprocessed_image.shape}')
@@ -252,7 +252,7 @@ def segment_fn(image):
 def lime_xai(image_path,sample_size=1000,target_size=(224,224)):
 
     # Load trained model
-    model = load_model('um_model.h5')
+    model = load_model('um_modelv1.h5')
 
     explainer = lime_image.LimeImageExplainer()
     img = tf.keras.preprocessing.image.load_img(image_path,target_size=target_size)
