@@ -4,35 +4,8 @@ import matplotlib.pyplot as plt
 import subprocess
 from PIL import Image
 import requests
-from utils import lime_xai, login, model_predictions, preprocess_image, train_model, register_trained_model, move_model_to_production, deploy_trained_model
+from utils import lime_xai, login, model_predictions, preprocess_image
 from skimage.segmentation import slic, mark_boundaries
-
-#model_endpoint = "http://localhost:7777/invocations"
-model_endpoint = "http://127.0.0.1:7777/invocations"
-
-if 'authenticated' not in st.session_state:
-    st.session_state.authenticated = False
-
-# Define a session state variable to track training status, model name, and deployment status
-if 'training_status' not in st.session_state:
-    st.session_state.training_status = False
-
-if 'model_name' not in st.session_state:
-    st.session_state.model_name = ""
-
-if 'registration_status' not in st.session_state:
-    st.session_state.registration_status = False
-
-if 'production_status' not in st.session_state:
-    st.session_state.production_status = False
-
-if 'mlflow_run_id' not in st.session_state:
-    st.session_state.mlflow_run_id = None
-
-if 'history' not in st.session_state:
-    st.session_state.history = None
-
-
        
 # Title
 st.title('HASH Project Dashboard')
@@ -41,7 +14,6 @@ st.title('HASH Project Dashboard')
 page = st.sidebar.selectbox('Navigation', ["Model Prediction", "Train Model", "Model Analysis"])
 st.sidebar.markdown("""---""")
 #st.sidebar.write("Created by [MARCONI LAB@MAK](https://marconilab.org/)")
-#st.sidebar.image("marc.jpg", width=200)
 st.sidebar.write("PROJECT PARTNERS")
 st.sidebar.image("marc.jpg", width=100)
 st.sidebar.image("ailab.jpg", width=100)
@@ -88,7 +60,7 @@ if page == "Model Prediction":
                 prediction = [1 if pred > 0.5 else 0 for pred in probabilities]
                 print("Probability: ",probabilities)
 
-            # ----------- Ouputs
+            # Ouputs
             outputs = st.columns([2, 1])
             outputs[0].markdown("Pathology Prediction: ")
 
